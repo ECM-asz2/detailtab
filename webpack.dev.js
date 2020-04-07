@@ -14,8 +14,8 @@ module.exports = function() {
 				devtool: 'source-map',
 				target : "web",
 				devServer : {
-					host : "0.0.0.0",
-					port : 8073,
+					host : "localhost",
+					port : process.env.PORT || 8073,
 					hot : false,
 					inline: false,
 					disableHostCheck: true,
