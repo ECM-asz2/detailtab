@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --config ./webpack.dev.js",
+	"start": "webpack-dev-server --config ./webpack.dev.js",
     "build": "webpack --config ./webpack.prod.js --progress",
     "test": "jest",
     "depTree": "webpack --config ./webpack.prod.js --profile --json > stats.json"
