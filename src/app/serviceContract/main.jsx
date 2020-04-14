@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import rootReducer from "./reducer/RootReducer";
 import DetailTab from "./DetailTab";
 import AppInitializer from '../components/AppInitializer';

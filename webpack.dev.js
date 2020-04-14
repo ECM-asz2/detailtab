@@ -3,6 +3,8 @@ const CommonConfig = require('./webpack.common.js');
 const path = require('path');
 const webpack = require("webpack");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+
 
 module.exports = function() {
 	return Merge(
@@ -20,7 +22,6 @@ module.exports = function() {
 					inline: false,
 					disableHostCheck: true,
 				},
-				NPM_CONFIG_PRODUCTION: false,
 				plugins : [ new webpack.DefinePlugin({
 					'process.env' : {
 						NODE_ENV: JSON.stringify('development'),
@@ -28,8 +29,8 @@ module.exports = function() {
 						BASE_REST_URL: JSON.stringify('../../rest/')
 					}
 				}),
-				new CleanWebpackPlugin()
-
+				new CleanWebpackPlugin(),
+				new CaseSensitivePathsPlugin()
 				],
 				mode: 'development'
 			});
