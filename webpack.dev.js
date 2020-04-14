@@ -20,7 +20,7 @@ module.exports = function() {
 					inline: false,
 					disableHostCheck: true,
 				},
-
+				NPM_CONFIG_PRODUCTION: false,
 				plugins : [ new webpack.DefinePlugin({
 					'process.env' : {
 						NODE_ENV: JSON.stringify('development'),
