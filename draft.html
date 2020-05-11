@@ -8,19 +8,23 @@
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 </head>
 
-<body style="margin-left: 20px;">
-  <h1 class="mdc-typography--headline5">Testvertrag<i style=" font-size: 18px;
+<body style="margin-left: 20px;width:600px;height:1200px;">
+  <div
+    style="margin-top: 15px;background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
+    class="mdc-typography--headline6">Vertragsart und Unterzeichnung</div>
+  <h1 class="mdc-typography--headline5" style="
+    font-size: 15px;
+    margin-left: 25px;">Testvertrag<i style=" font-size: 18px;
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 3px;
     margin-left: 5px;
     color: #2ecc71;" class="material-icons md-18" title="Abgeschlossen">fiber_manual_record</i></h1>
   <div>
-    <div style=" float: left;
-  width: 48%;
-  margin-right: 2%;
-  margin-bottom: 40px;">
-      <div class="mdc-data-table">
+    <div style=" float: left; width: 48%; margin-right: 2%; margin-bottom: 40px;">
+      <div class="mdc-data-table" style="width: 500px;
+      align-items: center;
+      margin-left: 25px;">
         <table class="mdc-data-table__table" aria-label="Dessert calories" id="searchable">
           <thead>
             <tr class="mdc-data-table__header-row">
@@ -49,32 +53,41 @@
         </table>
       </div>
     </div>
-    <div style="float: right;
+    <div style="
   width: 48%;
   margin-right: 2%;
   margin-bottom: 40px;">
-      <h1 class="mdc-typography--headline6">Vorhandene Vertragsunterlagen</h1>
-      <ul class="mdc-list mdc-list">
+      <div
+        style="background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
+        class="mdc-typography--headline6">Vorhandene Vertragsunterlagen</div>
+      <ul class="mdc-list mdc-list" style="font-size: 14px;width: 500px;margin-left:25px;">
         <li class="mdc-list-item" tabindex="0">
+		  <span class="material-icons mdc-list-item__graphic">check_circle</span>
           <span class="mdc-list-item__text">Bonusvereinbarungen</span>
-          <span style="margin-left: 20px;" class="material-icons mdc-list-item__graphic">check_circle</span>
         </li>
         <li class="mdc-list-item">
+		  <span class="material-icons mdc-list-item__graphic">check_circle</span>
           <span class="mdc-list-item__text">Geheimhaltungsvereinbarungen/NDA</span>
         </li>
         <li class="mdc-list-item">
+		  <span class="material-icons mdc-list-item__graphic"></span>
           <span class="mdc-list-item__text">Kundenpreislisten</span>
         </li>
         <li class="mdc-list-item">
-          <span class="material-icons mdc-list-item__graphic">check_circle</span>
-          <span class="mdc-list-item__text">Bürgschaften</span>
+          <span class="material-icons mdc-list-item__graphic"></span>
+		  <span class="mdc-list-item__text">Bürgschaften</span>
         </li>
       </ul>
     </div>
   </div>
   <div>
-    <h1 class="mdc-typography--headline6">Partnerliste</h1>
-    <div class="mdc-data-table">
+    <div
+      style="background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
+      class="mdc-typography--headline6">Partnerliste</div>
+    <div class="mdc-data-table" style="width: 500px;
+    font-size: 14px;
+    margin-top: 15px;
+    margin-left: 25px;">
       <label class="mdc-text-field mdc-text-field--filled">
         <span class="mdc-text-field__ripple"></span>
         <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
@@ -83,7 +96,8 @@
         <span class="mdc-floating-label" id="my-label-id">Suche</span>
         <span class="mdc-line-ripple"></span>
       </label>
-      <table class="mdc-data-table__table" aria-label="Dessert calories" id="searchable">
+      <table style="font-size: 14px;width: 400px;" class="mdc-data-table__table" aria-label="Dessert calories"
+        id="searchable">
         <thead>
           <tr class="mdc-data-table__header-row">
             <th class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric" role="columnheader"
