@@ -11,7 +11,7 @@
 <body style="margin-left: 20px;width:600px;height:1200px;">
   <div
     style="margin-top: 15px;background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
-    class="mdc-typography--headline6">Vertragsart und Unterzeichnung</div>
+    class="mdc-typography--headline6">Vertragsarten</div>
   <h1 class="mdc-typography--headline5" style="
     font-size: 15px;
     margin-left: 25px;">Testvertrag<i style=" font-size: 18px;
@@ -21,33 +21,41 @@
     margin-left: 5px;
     color: #2ecc71;" class="material-icons md-18" title="Abgeschlossen">fiber_manual_record</i></h1>
   <div>
-    <div style=" float: left; width: 48%; margin-right: 2%; margin-bottom: 40px;">
+    <div style=" float: left; width: 40%; margin-right: 2%; margin-bottom: 40px;">
       <div class="mdc-data-table" style="width: 500px;
       align-items: center;
       margin-left: 25px;">
         <table class="mdc-data-table__table" aria-label="Dessert calories" id="searchable">
           <thead>
             <tr class="mdc-data-table__header-row">
-              <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Vertragsart</th>
-              <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Unterzeichnet</th>
+              <th class="mdc-data-table__header-cell" role="columnheader" scope="col" style="width:40%">Vertragsart</th>
+              <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+              <th class="mdc-data-table__header-cell" role="columnheader" scope="col" style="text-align: center;">
+                Unterzeichnet</th>
             </tr>
           </thead>
           <tbody class="mdc-data-table__content">
             <tr class="mdc-data-table__row">
               <td class="mdc-data-table__cell">Arbeitnehmerüberlassung</td>
               <td class="mdc-data-table__cell"><span class="material-icons">check_circle</span></td>
+              <td class="mdc-data-table__cell"><span style="margin-left: 40%;"
+                  class="material-icons">check_circle</span></td>
             </tr>
             <tr class="mdc-data-table__row">
               <td class="mdc-data-table__cell">Dienstvertrag</td>
+              <td class="mdc-data-table__cell"></td>
               <td class="mdc-data-table__cell"></td>
             </tr>
             <tr class="mdc-data-table__row">
               <td class="mdc-data-table__cell">Werkvertrag</td>
               <td class="mdc-data-table__cell"><span class="material-icons">check_circle</span></td>
+              <td class="mdc-data-table__cell"></td>
             </tr>
             <tr class="mdc-data-table__row">
               <td class="mdc-data-table__cell">Personalvermittlung</td>
               <td class="mdc-data-table__cell"><span class="material-icons">check_circle</span></td>
+              <td class="mdc-data-table__cell"><span style="margin-left: 40%;"
+                  class="material-icons">check_circle</span></td>
             </tr>
           </tbody>
         </table>
@@ -59,31 +67,46 @@
   margin-bottom: 40px;">
       <div
         style="background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
-        class="mdc-typography--headline6">Vorhandene Vertragsunterlagen</div>
-      <ul class="mdc-list mdc-list" style="font-size: 14px;width: 500px;margin-left:25px;">
-        <li class="mdc-list-item" tabindex="0">
-		  <span class="material-icons mdc-list-item__graphic">check_circle</span>
-          <span class="mdc-list-item__text">Bonusvereinbarungen</span>
-        </li>
-        <li class="mdc-list-item">
-		  <span class="material-icons mdc-list-item__graphic">check_circle</span>
-          <span class="mdc-list-item__text">Geheimhaltungsvereinbarungen/NDA</span>
-        </li>
-        <li class="mdc-list-item">
-		  <span class="material-icons mdc-list-item__graphic"></span>
-          <span class="mdc-list-item__text">Kundenpreislisten</span>
-        </li>
-        <li class="mdc-list-item">
-          <span class="material-icons mdc-list-item__graphic"></span>
-		  <span class="mdc-list-item__text">Bürgschaften</span>
-        </li>
-      </ul>
+        class="mdc-typography--headline6">Vertragsunterlagen</div>
+      <div class="mdc-data-table" style="width: 500px;
+        align-items: center;
+        margin-left: 25px; margin-top: 40px;">
+        <table class="mdc-data-table__table" aria-label="Dessert calories" id="">
+          <thead>
+            <tr class="mdc-data-table__header-row">
+            </tr>
+          </thead>
+          <tbody class="mdc-data-table__content">
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Rahmenvereinbarungen</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Geheimhaltungsvereinbarungen/NDA</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Kundenpreislisten</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Bürgschaften</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">MSP-/Colieferantenverträge</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Zahlungsvereinbarungen</td>
+            </tr>
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">Personalvermittlung</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   <div>
     <div
       style="background-color: #34495e;width: 550px;height: 30px;text-align: center;display: inline-block;font-size: 15px!important;color: white;"
-      class="mdc-typography--headline6">Partnerliste</div>
+      class="mdc-typography--headline6">Debitorenliste</div>
     <div class="mdc-data-table" style="width: 500px;
     font-size: 14px;
     margin-top: 15px;
@@ -96,28 +119,32 @@
         <span class="mdc-floating-label" id="my-label-id">Suche</span>
         <span class="mdc-line-ripple"></span>
       </label>
-      <table style="font-size: 14px;" class="mdc-data-table__table" aria-label="Dessert calories"
-        id="searchable">
+      <table style="font-size: 14px;" class="mdc-data-table__table" aria-label="Dessert calories" id="searchable">
         <thead>
           <tr class="mdc-data-table__header-row">
-            <th class="mdc-data-table__header-cell mdc-data-table__header-cell" role="columnheader"
-              scope="col">
-              Partner-ID</th>
-            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Partnername</th>
+            <th class="mdc-data-table__header-cell mdc-data-table__header-cell" role="columnheader" scope="col">
+              Debitorennummer</th>
+            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Debitorenname</th>
           </tr>
         </thead>
         <tbody class="mdc-data-table__content">
           <tr class="mdc-data-table__row">
             <td class="mdc-data-table__cell mdc-data-table__cell">1045241</td>
-            <td class="mdc-data-table__cell"><a href="https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389">Opel Automobile GmbH</a></td>
+            <td class="mdc-data-table__cell"><a
+                href="https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview">Opel
+                Automobile GmbH</a></td>
           </tr>
           <tr class="mdc-data-table__row">
             <td class="mdc-data-table__cell mdc-data-table__cell">1158594</td>
-            <td class="mdc-data-table__cell">Daimler AG Mercedes-Benz</td>
+            <td class="mdc-data-table__cell"><a
+                href="https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview">Daimler
+                AG Mercedes-Benz</a></td>
           </tr>
           <tr class="mdc-data-table__row">
             <td class="mdc-data-table__cell mdc-data-table__cell">10265938</td>
-            <td class="mdc-data-table__cell">John Deere GmbH & Co. KG</td>
+            <td class="mdc-data-table__cell"><a
+                href="https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview">John
+                Deere GmbH & Co. KG</a></td>
           </tr>
         </tbody>
       </table>
