@@ -27,6 +27,9 @@ logger.token('requestId', function getRequestId(req) {
 });
 
 const rootRouter = require('./routes/root')(basePath, version);
+const contracttypeRouter = require('./routes/contracttype')();
+const contractdocumentsRouter = require('./routes/contractdocuments')();
+const debitorlistRouter = require('./routes/debitorlist')(assetBasePath);
 
 app.use(logger('[ctx@49610 rid=":requestId" tn=":tenantId"][http@49610 method=":method" url=":url" millis=":response-time" sbytes=":res[content-length]" status=":status"] '));
 app.use(express.json());
@@ -35,6 +38,9 @@ app.use(cookieParser());
 app.use(assetBasePath, express.static(path.join(__dirname, 'web')));
 
 app.use(basePath + '/', rootRouter);
+app.use(basePath + '/contracttype', contracttypeRouter);
+app.use(basePath + '/contractdocuments', contractdocumentsRouter);
+app.use(basePath + '/debitorlist', debitorlistRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -51,7 +57,9 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error', {
+        requestId: req
+    });
 });
 
 module.exports = app;

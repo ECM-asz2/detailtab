@@ -1,0 +1,33 @@
+<div class="mdc-data-table">
+    <label class="mdc-text-field mdc-text-field--filled">
+        <span class="mdc-text-field__ripple"></span>
+        <input class="mdc-text-field__input" type="text" aria-labelledby="searchField">
+        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" tabindex="0" role="button">search</i>
+        <span class="mdc-floating-label" id="searchField">Suche</span>
+        <span class="mdc-line-ripple"></span>
+    </label>
+    <table class="mdc-data-table__table" id="debitorList">
+        <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell mdc-data-table__header-cell" role="columnheader" scope="col">
+                    Debitorennummer
+                </th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">
+                    Debitorenname
+                </th>
+            </tr>
+        </thead>
+        <tbody class="mdc-data-table__content">
+            {{#each data}}
+                <tr class="mdc-data-table__row">
+                    <td class="mdc-data-table__cell mdc-data-table__cell">
+                        {{this.debitorId}}
+                    </td>
+                    <td class="mdc-data-table__cell">
+                        <a href="{{this.debitorLink}}">{{this.debitorName}}</a>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
