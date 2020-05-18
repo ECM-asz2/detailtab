@@ -1,9 +1,9 @@
 <div class="mdc-data-table">
     <label class="mdc-text-field mdc-text-field--filled">
         <span class="mdc-text-field__ripple"></span>
-        <input class="mdc-text-field__input" type="text" aria-labelledby="searchField">
+        <input class="mdc-text-field__input" type="text" aria-labelledby="searchField" onkeyup="search()" id="search">
         <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" tabindex="0" role="button">search</i>
-        <span class="mdc-floating-label" id="searchField">Suche</span>
+        <span class="mdc-floating-label" id="searchField">Suche nach Name</span>
         <span class="mdc-line-ripple"></span>
     </label>
     <table class="mdc-data-table__table" id="debitorList">
@@ -24,7 +24,7 @@
                         {{this.debitorId}}
                     </td>
                     <td class="mdc-data-table__cell">
-                        <a href="{{this.debitorLink}}">{{this.debitorName}}</a>
+                        <a href="{{this.debitorLink}}" class="debitorName">{{this.debitorName}}</a>
                     </td>
                 </tr>
             {{/each}}
