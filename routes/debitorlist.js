@@ -1,6 +1,7 @@
 const express = require('express');
+const config = require('../global.config');
 
-module.exports = function (assetBasePath) {
+module.exports = function (assetBasePath, baseUrl) {
     const router = express.Router();
 
     router.get('/', function (req, res, next) {
@@ -13,7 +14,7 @@ module.exports = function (assetBasePath) {
                     stylesheet: `${assetBasePath}/debitorlist.css`,
                     script: `${assetBasePath}/debitorlist.js`,
                     body: '/../views/debitorlist.hbs',
-                    data: getTestData()
+                    metaData: JSON.stringify(getMetaData(req.systemBaseUri))
                 });
             },
 
@@ -25,28 +26,6 @@ module.exports = function (assetBasePath) {
     return router;
 };
 
-//TODO: Use Real data from API
-function getTestData() {
-    return [
-        {
-            "debitorName": "Opel Rüsselheim",
-            "debitorId": 60423,
-            "debitorLink": "https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview"
-        },
-        {
-            "debitorName": "John Deere AG",
-            "debitorId": 974343,
-            "debitorLink": "https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview"
-        },
-        {
-            "debitorName": "General Motors",
-            "debitorId": 22023,
-            "debitorLink": "https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview"
-        },
-        {
-            "debitorName": "Mercedes Benz AG",
-            "debitorId": 418945,
-            "debitorLink": "https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/o2/D100145389#preview"
-        }
-    ];
+function getMetaData(host){
+    return config[host];
 }
