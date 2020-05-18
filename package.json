@@ -1,0 +1,25 @@
+{
+  "name": "able-detailtab",
+  "version": "0.1.8",
+  "description": "This app extends the case manager to show customized content.",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"Error: no start specified\" && exit 1"
+  },
+  "author": "Vanessa Teichrib, Alexander Strutz",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "aws-serverless-express": "^3.3.8",
+    "cookie-parser": "^1.4.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "hbs": "^4.1.1",
+    "http-errors": "^1.7.3",
+    "morgan": "^1.10.0",
+    "request": "^2.88.2",
+    "uuid": "^3.4.0"
+  }
+}

@@ -1,0 +1,179 @@
+body {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    background-image: url(logos/1100.jpg);
+    background-repeat: no-repeat;
+    background-size: 210px 70px;
+    background-position: right 40px top -10px;
+}
+
+.property-field {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.contentWrapper {
+    overflow: hidden;
+}
+
+.property-wrapper-left {
+    float: left;
+    width: 48%;
+    padding-top: 5px;
+    margin-right: 2%;
+}
+
+.property-wrapper-right {
+    overflow: hidden;
+    width: 48%;
+    padding-top: 5px;
+}
+
+.subregister {
+    color: #f1c40f;
+}
+
+.IE-container {
+    display: none;
+}
+
+h1 {
+    color: #555;
+    max-width: 450px;
+}
+
+strong {
+    font-size: 14px!important;
+    color: #555;
+}
+
+.divider {
+    border: 0.5px solid #dddddd;
+    margin-top: 20px;
+}
+
+.position_overflow {
+    width: 400px;
+    font-size: 14px!important;
+    /*margin-top: -10px;*/
+    margin-bottom: 30px;
+}
+
+.href_list {
+    color: black;
+    font-size: 14px;
+    text-decoration: none
+}
+
+.center-align {
+    align-items: center!important;
+}
+
+.mdc-text-field-helper-line {
+    display: none;
+}
+
+.position_overflow {
+    width: 400px;
+    font-size: 14px!important;
+    /*margin-top: -10px;*/
+    margin-bottom: 30px;
+}
+
+/***** Media-Rules ******/
+
+@media screen and (max-width: 680px) {
+    #previewBody {
+        background-color: #ffffff !important;
+        background-image: none !important;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    body {
+        background-size: 210px 70px;
+    }
+    .property-wrapper-right {
+        overflow: initial !important;
+        width: 100% !important;
+    }
+    .property-wrapper-left {
+        width: 100% !important;
+    }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    /* IE10+ CSS styles go here */
+    #subregister-container, .mdc-linear-progress mdc-linear-progress--indeterminate, .mdc-linear-progress__bar-inner {
+        visibility: hidden;
+    }
+    .mdc-typography--subtitle1 {
+        color: rgba(0, 0, 0, .87) !important;
+        font-size: 14px !important;
+    }
+    .mdc-notched-outline__notch, .mdc-floating-label {
+        display: none;
+    }
+    .mdc-text-field-helper-line {
+        display: block !important;
+    }
+    .IE-container {
+        visibility: visible !important;
+    }
+}
+
+/***** Material ******/
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    /* font-size: 18px;  Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+.material-icons.md-24.subregister {
+    margin-right: 20px;
+    color: #f1c40f;
+    font-size: 24px;
+    margin-top: 5px;
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+    font-size: 14px!important;
+}
+
+.mdc-text-field__input {
+    font-size: 14px;
+    text-overflow: ellipsis;
+}
+
+.mailto_input {
+    text-decoration: none !important;
+    width: 100% !important;
+}
+
+.mdc-linear-progress__bar-inner {
+    border-color: #555 !important;
+}
+
+.mdc-linear-progress.mdc-linear-progress--indeterminate {
+    width: 85%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
