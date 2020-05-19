@@ -55,7 +55,8 @@ async function getData(config) {
             if (response.multivalueProperties[i].id === config.partnerIdProperty) {
                 for (let key of Object.keys(response.multivalueProperties[i].values)) {
                     let debitor = await buildDebitor(response.multivalueProperties[i].values[key], config, options);
-                    debitors.push(debitor);
+                    if (debitor ==! -1)
+                        debitors.push(debitor);
                 }
             }
         }
@@ -67,18 +68,26 @@ async function getData(config) {
 }
 
 async function buildDebitor(debitorId, config, options) {
-    let debitor = {};
-    debitor.debitorId = debitorId;
-    options.url = config.host + '/dms/r/' + config.repoId + '/sr/?objectdefinitionids=["' + config.partnerCategory + '"]&properties={"' + config.debitorIdProperty + '":["' + debitorId + '"]}';
-    let response = await $.ajax(options);
-    let debitorResult = response.items[0];
-    debitor.debitorLink = config.host + '/dms/r/' + config.repoId + '/o2/' + debitorResult.id + '#details';
-    for (let i in debitorResult.displayProperties) {
-        if (debitorResult.displayProperties[i].id === config.partnerNameProperty) {
-            debitor.debitorName = debitorResult.displayProperties[i].value;
+    try {
+        let debitor = {};
+        debitor.debitorId = debitorId;
+        options.url = config.host + '/dms/r/' + config.repoId + '/sr/?objectdefinitionids=["' + config.partnerCategory + '"]&properties={"' + config.debitorIdProperty + '":["' + debitorId + '"]}';
+        let response = await $.ajax(options);
+        if (response.items.length === 0) {
+            return -1;
         }
+        let debitorResult = response.items[0];
+        debitor.debitorLink = config.host + '/dms/r/' + config.repoId + '/o2/' + debitorResult.id + '#details';
+        for (let i in debitorResult.displayProperties) {
+            if (debitorResult.displayProperties[i].id === config.partnerNameProperty) {
+                debitor.debitorName = debitorResult.displayProperties[i].value;
+            }
+        }
+        return debitor;
+    } catch {
+        return -1;
     }
-    return debitor;
+
 }
 
 function displayDebitors(debitors) {

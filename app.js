@@ -28,7 +28,7 @@ logger.token('requestId', function getRequestId(req) {
 
 const rootRouter = require('./routes/root')(basePath, version);
 const contracttypeRouter = require('./routes/contracttype')();
-const contractdocumentsRouter = require('./routes/contractdocuments')();
+const contractdocumentsRouter = require('./routes/contractdocuments')(assetBasePath);
 const debitorlistRouter = require('./routes/debitorlist')(assetBasePath);
 
 app.use(logger('[ctx@49610 rid=":requestId" tn=":tenantId"][http@49610 method=":method" url=":url" millis=":response-time" sbytes=":res[content-length]" status=":status"] '));
