@@ -55,7 +55,7 @@ async function getData(config) {
             if (response.multivalueProperties[i].id === config.partnerIdProperty) {
                 for (let key of Object.keys(response.multivalueProperties[i].values)) {
                     let debitor = await buildDebitor(response.multivalueProperties[i].values[key], config, options);
-                    if (debitor ==! -1)
+                    if (debitor !== -1)
                         debitors.push(debitor);
                 }
             }
