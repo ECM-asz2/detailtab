@@ -8,7 +8,10 @@ module.exports = {
         "debitorIdProperty": "47",
         "partnerNameProperty": "48",
         "partnerIdProperty": "32",
-        "partnerRoleProperty": "33"
+        "partnerRoleProperty": "33",
+        "customerDocumentTypeId": "130",
+        "folderMimeType": "application/vnd.dvelop.folder",
+        "customerRegisterCaption": "02 - Kunde Rahmenvereinbarungen"
     },
     "https://able-group-qas.d-velop.cloud": {
         "host": "https://able-group-qas.d-velop.cloud",

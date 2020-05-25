@@ -10,8 +10,8 @@ window.onload = async function () {
         return new mdc.dataTable.MDCDataTable(el);
     });
 
-    let documents = await getData(config);
-    displayDocuments(documents);
+    let documentTypes = await getData(config);
+    displayDocuments(removeDuplicates(documentTypes));
 };
 
 async function getData(config) {
@@ -32,9 +32,9 @@ async function getData(config) {
                 for (let key of Object.keys(response.multivalueProperties[i].values)) {
                     for (let j in response.multivalueProperties) {
                         if (response.multivalueProperties[j].id === config.partnerRoleProperty && response.multivalueProperties[j].values[key] === "Kunde") {
-                            let doc = await getDocumentsForDebitor(response.multivalueProperties[i].values[key], config, options)
-                            if (doc == ! -1)
-                                documents.push(doc)
+                            let doc = await getDocumentsForDebitor(response.multivalueProperties[i].values[key], config, options);
+                            if (doc !== -1)
+                                documents = documents.concat(doc);
                         }
                     }
 
@@ -56,18 +56,16 @@ async function getDocumentsForDebitor(debitorId, config, options) {
         options.url = config.host + '/dms/r/' + config.repoId + '/fo/' + searchResults.items[0].id + '/content';
         let debitorFolder = await $.ajax(options);
         for (let i in debitorFolder.items) {
-            if (debitorFolder.items[i].caption === "02 - Kunde Rahmenvereinbarungen" && debitorFolder.items[i].id === "application/vnd.dvelop.folder") {
-                options.url = config.host + '/dms/r' + config.repoId + '/fo/' + debitorFolder.items[i].id + '/content';
+            if (debitorFolder.items[i].caption === config.customerRegisterCaption && debitorFolder.items[i].mimeType === config.folderMimeType) {
+                options.url = config.host + '/dms/r/' + config.repoId + '/fo/' + debitorFolder.items[i].id + '/content';
                 let documentsInRegister = await $.ajax(options);
                 for (let j in documentsInRegister.items) {
-                    for (let k in documentsInRegister[j].displayProperties) {
-                        if(documentsInRegister[j].displayProperties[k].id === "130"){
-                            let docType = documentsInRegister[j].displayProperties[k].value;
-                            if(!documents.includes(docType)){
-                                documents.push({name: docType});
+                    for (let k in documentsInRegister.items[j].displayProperties) {
+                        if (documentsInRegister.items[j].displayProperties[k].id === config.customerDocumentTypeId) {
+                            let docType = documentsInRegister.items[j].displayProperties[k].value;
+                            if (!documents.includes(docType)) {
+                                documents.push(docType);
                             }
-                            //TODO: Check if already in array
-                            //Push it into
                         }
                     }
                 }
@@ -78,14 +76,14 @@ async function getDocumentsForDebitor(debitorId, config, options) {
         } else {
             return documents;
         }
-    } catch {
-        console.log(error);
+    } catch (err) {
+        console.error(err);
         return -1;
     }
-    //Kundeakte zur debitorID holen
-    // Alle Doc in Register02 holen
-    //Alle Doctypen sammeln
-    //Als Array(?) zurückgeben
+}
+
+function removeDuplicates(arr) {
+    return Array.from(new Set(arr));
 }
 
 function displayDocuments(documents) {
@@ -94,7 +92,7 @@ function displayDocuments(documents) {
         let tableHtml = "";
         for (let i in documents) {
             tableHtml += '<tr class="mdc-data-table__row"><td class="mdc-data-table__cell">'
-            tableHtml += documents[i].name;
+            tableHtml += documents[i];
             tableHtml += '</td></tr>';
         }
         $('.mdc-data-table__content').html(tableHtml);
