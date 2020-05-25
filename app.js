@@ -27,7 +27,7 @@ logger.token('requestId', function getRequestId(req) {
 });
 
 const rootRouter = require('./routes/root')(basePath, version);
-const contracttypeRouter = require('./routes/contracttype')();
+const contracttypeRouter = require('./routes/contracttype')(assetBasePath);
 const contractdocumentsRouter = require('./routes/contractdocuments')(assetBasePath);
 const debitorlistRouter = require('./routes/debitorlist')(assetBasePath);
 

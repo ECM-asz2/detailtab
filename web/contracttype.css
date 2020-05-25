@@ -1,0 +1,30 @@
+.contractTypeWrapper {
+    display: none;
+}
+
+.contentWrapper {
+    margin: 24px;
+}
+
+.contractTitle {
+    font-size: 15px;
+}
+
+.contractStatus {
+    font-size: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 3px;
+    margin-left: 5px;
+    color: #2ecc71;
+}
+
+.tableContainer {
+    float: left;
+    width: 40%;
+    margin-right: 2%;
+    margin-bottom: 40px;
+    width: 500px;
+    align-items: center;
+    margin-left: 25px;
+}
