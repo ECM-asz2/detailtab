@@ -8,9 +8,10 @@
 
 .contractTitle {
     font-size: 15px;
+    margin-left: 16px;
 }
 
-.contractStatus {
+#contractStatus {
     font-size: 18px;
     display: inline-block;
     vertical-align: middle;
@@ -27,4 +28,12 @@
     width: 500px;
     align-items: center;
     margin-left: 25px;
+}
+
+.signedIcon {
+    margin-left: 40%;
+}
+
+.existsCell {
+    padding-left: 0px;
 }
