@@ -5,7 +5,7 @@ const contractStatus = {
 }
 
 window.onload = async function () {
-    console.log($('.contentWrapper'));
+    let config = $('#metaData').data("meta");
 
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
 
@@ -14,7 +14,7 @@ window.onload = async function () {
     });
 
     let contractTypes = await getContractTypes();
-    let contract = await getContractStatus();
+    let contract = await getContractStatus(config);
     displayContractStatus(contract);
     displayContractTypes(contractTypes);
 };
@@ -46,24 +46,80 @@ async function getContractTypes() {
     ];
 }
 
-async function getContractStatus() {
-    return { name: "Testvertrag", status: contractStatus.running }
+async function getContractStatus(config) {
+    let contractBeginn, contractEnd;
+    let documentId = top.location.href.split('/')[top.location.href.split('/').length - 1].split('#')[0]; //This is risky, but unavoidable
+    let contract = {};
+    const options = {
+        headers: {
+            'Accept': 'application/hal+json',
+            'Content-Type': 'application/hal+json',
+        },
+        url: config.host + '/dms/r/' + config.repoId + '/o2/' + documentId,
+        method: 'get'
+    }
+    let contractResponse = await $.ajax(options);
+    for (let i in contractResponse.objectProperties) {
+        if (contractResponse.objectProperties[i].id === config.contractNameProperty) {
+            contract.name = contractResponse.objectProperties[i].value;
+        } else if (contractResponse.objectProperties[i].id === config.contractStartdateProperty) {
+            contractBeginn = contractResponse.objectProperties[i].value;
+        } else if (contractResponse.objectProperties[i].id === config.contractEnddateProperty) {
+            contractEnd = contractResponse.objectProperties[i].value;
+        }
+    }
+    contract.status = determineContractStatus(contractBeginn, contractEnd);
+    return contract;
+}
+
+function determineContractStatus(contractBegin, contractEnd) {
+    if (contractBegin !== '' && typeof contractBegin !== 'undefined') {
+        let beginTimestamp = dateParser(contractBegin);
+        if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
+            let endTimestamp = dateParser(contractEnd);
+            if (beginTimestamp < Date.now() && endTimestamp > Date.now()) {
+                return contractStatus.running;
+            } else {
+                return contractStatus.terminated;
+            }
+        } else {
+            if (beginTimestamp < Date.now()) {
+                return contractStatus.running;
+            } else {
+                return contractStatus.terminated;
+            }
+        }
+    } else {
+        if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
+            let endTimestamp = dateParser(contractEnd);
+            if (endTimestamp > Date.now()) {
+                return contractStatus.running;
+            } else {
+                return contractStatus.terminated;
+            }
+        } else {
+            return contractStatus.terminated;
+        }
+    }
+}
+
+function dateParser(dateString) {
+    let dateArray = dateString.split('.');
+    return Date.parse(dateArray.reverse().join('-'));
 }
 
 function displayContractStatus(contract) {
     if (contract.name) {
-        $('h1').text(contract.name);
+        $('.contractTitle').text(contract.name);
     } else {
-        $('h1').text("Fehler: Kein Name hinterlegt.");
-    }/*
-    console.log(contract.status);
-    console.log(contractStatus.running);
+        $('.contractTitle').text("Fehler: Kein Name hinterlegt.");
+    }
     switch (contract.status) {
-        case contractStatus.running: $('#contractStatus').css('color', '#2ecc71'); $('#contractStatus').show(); console.log($('#contractStatus')); console.error("53"); break;
-        case contractStatus.noticed: $('#contractStatus').css('color', '#f1c40f'); console.error("34"); break;
-        case contractStatus.terminated: $('#contractStatus').css('color', '#e74c3c'); console.error("2H"); break;
-        //default: $('.contractStatus').hide(); console.error("AH");
-    }*/
+        case contractStatus.running: $('#contractStatus').css('color', '#2ecc71'); break;
+        case contractStatus.noticed: $('#contractStatus').css('color', '#f1c40f'); break;
+        case contractStatus.terminated: $('#contractStatus').css('color', '#e74c3c'); break;
+        default: $('.contractStatus').hide(); console.error("Unknown contract status.")
+    }
 }
 
 function displayContractTypes(contractTypes) {

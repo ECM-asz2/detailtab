@@ -10,6 +10,9 @@ module.exports = {
         "partnerIdProperty": "32",
         "partnerRoleProperty": "33",
         "customerDocumentTypeId": "130",
+        "contractNameProperty": "17",
+        "contractStartdateProperty": "28",
+        "contractEnddateProperty": "29",
         "folderMimeType": "application/vnd.dvelop.folder",
         "customerRegisterCaption": "02 - Kunde Rahmenvereinbarungen"
     },
