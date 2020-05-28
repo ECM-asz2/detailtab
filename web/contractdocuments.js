@@ -92,7 +92,7 @@ function displayDocuments(documents) {
         let tableHtml = "";
         for (let i in documents) {
             tableHtml += '<tr class="mdc-data-table__row"><td class="mdc-data-table__cell">'
-            tableHtml += documents[i];
+            tableHtml += documents[i].split('Kunde ')[1];
             tableHtml += '</td></tr>';
         }
         $('.mdc-data-table__content').html(tableHtml);
