@@ -48,7 +48,7 @@ async function getContractTypes(config, documentId) {
 function buildContractTypeObject(title, signedField) {
     let contractTypeObject = {};
     contractTypeObject.title = title;
-    if (signedField === "Ja") {
+    if (signedField === "Ja, unterzeichnet") {
         contractTypeObject.exists = true;
         contractTypeObject.signed = true;
     } else if (signedField === "Ja, jedoch nicht unterzeichnet") {
