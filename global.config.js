@@ -14,7 +14,11 @@ module.exports = {
         "contractStartdateProperty": "28",
         "contractEnddateProperty": "29",
         "folderMimeType": "application/vnd.dvelop.folder",
-        "customerRegisterCaption": "02 - Kunde Rahmenvereinbarungen"
+        "customerRegisterCaption": "02 - Kunde Rahmenvereinbarungen",
+        "aueProperty": "213",
+        "dvProperty": "214",
+        "wvProperty": "215",
+        "pvProperty": "216",
     },
     "https://able-group-qas.d-velop.cloud": {
         "host": "https://able-group-qas.d-velop.cloud",

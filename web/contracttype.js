@@ -12,44 +12,14 @@ window.onload = async function () {
     const dataTables = [].map.call(document.querySelectorAll('.mdc-data-table'), function (el) {
         return new mdc.dataTable.MDCDataTable(el);
     });
-
-    let contractTypes = await getContractTypes();
-    let contract = await getContractStatus(config);
+    let documentId = top.location.href.split('/')[top.location.href.split('/').length - 1].split('#')[0]; //This is risky, but unavoidable
+    let contractTypes = await getContractTypes(config, documentId);
+    let contract = await getContractStatus(config, documentId);
     displayContractStatus(contract);
     displayContractTypes(contractTypes);
 };
 
-async function getContractTypes() {
-    //Possible Types: Arbeitnehmerüberlassung, Dienstvertrag, Werkvertrag, Personalvermittlung
-    //TODO get Types from d3 Properties
-    return [
-        {
-            title: "Arbeitnehmerüberlassung",
-            exists: true,
-            signed: false
-        },
-        {
-            title: "Dienstvertrag",
-            exists: false,
-            signed: false
-        },
-        {
-            title: "Werkvertrag",
-            exists: false,
-            signed: false
-        },
-        {
-            title: "Personalvermittlung",
-            exists: true,
-            signed: true
-        }
-    ];
-}
-
-async function getContractStatus(config) {
-    let contractBeginn, contractEnd;
-    let documentId = top.location.href.split('/')[top.location.href.split('/').length - 1].split('#')[0]; //This is risky, but unavoidable
-    let contract = {};
+async function getContract(config, documentId) {
     const options = {
         headers: {
             'Accept': 'application/hal+json',
@@ -58,7 +28,48 @@ async function getContractStatus(config) {
         url: config.host + '/dms/r/' + config.repoId + '/o2/' + documentId,
         method: 'get'
     }
-    let contractResponse = await $.ajax(options);
+    return await $.ajax(options);
+}
+
+async function getContractTypes(config, documentId) {
+    let contractTypes = [];
+    let contract = await getContract(config, documentId);
+    for (let i in contract.objectProperties) {
+        switch (contract.objectProperties[i].id) {
+            case config.aueProperty: contractTypes.push(buildContractTypeObject("Arbeitnehmerüberlassung", contract.objectProperties[i].value)); break;
+            case config.dvProperty: contractTypes.push(buildContractTypeObject("Dienstvertrag", contract.objectProperties[i].value)); break;
+            case config.wvProperty: contractTypes.push(buildContractTypeObject("Werkvertrag", contract.objectProperties[i].value)); break;
+            case config.pvProperty: contractTypes.push(buildContractTypeObject("Personalvermittlung", contract.objectProperties[i].value)); break;
+        }
+    }
+    return contractTypes;
+}
+
+function buildContractTypeObject(title, signedField) {
+    let contractTypeObject = {};
+    contractTypeObject.title = title;
+    if (signedField === "Ja") {
+        contractTypeObject.exists = true;
+        contractTypeObject.signed = true;
+    } else if (signedField === "Ja, jedoch nicht unterzeichnet") {
+        contractTypeObject.exists = true;
+        contractTypeObject.signed = false;
+    } else if (signedField === "Nein") {
+        contractTypeObject.exists = false;
+        contractTypeObject.signed = false;
+    } else {
+        //Shouldn't happen
+        console.error("Unrecognized contract type field ", signedField);
+        contractTypeObject.exists = false;
+        contractTypeObject.signed = false;
+    }
+    return contractTypeObject;
+}
+
+async function getContractStatus(config, documentId) {
+    let contractBeginn, contractEnd;
+    let contract = {};
+    let contractResponse = await getContract(config, documentId);
     for (let i in contractResponse.objectProperties) {
         if (contractResponse.objectProperties[i].id === config.contractNameProperty) {
             contract.name = contractResponse.objectProperties[i].value;
