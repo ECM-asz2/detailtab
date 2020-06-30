@@ -6,10 +6,9 @@ const logger = require('morgan');
 const tenant = require('./modules/tenant')(process.env.systemBaseUri, process.env.SIGNATURE_SECRET);
 const requestId = require('./modules/requestid');
 
-const appName = "able-detailtab";
-const basePath = "/" + appName;
+const appName = 'able-detailtab';
+const basePath = `/${appName}`;
 const assetBasePath = process.env.ASSET_BASE_PATH || `/${appName}/assets`;
-const version = process.env.BUILD_VERSION || '1.0.0';
 
 const app = express();
 
@@ -19,14 +18,10 @@ app.set('view engine', 'hbs');
 
 app.use(tenant);
 app.use(requestId);
-logger.token('tenantId', function getTenantId(req) {
-    return req.tenantId
-});
-logger.token('requestId', function getRequestId(req) {
-    return req.requestId
-});
+logger.token('tenantId', (req) => req.tenantId);
+logger.token('requestId', (req) => req.requestId);
 
-const rootRouter = require('./routes/root')(basePath, version);
+const rootRouter = require('./routes/root')();
 const contracttypeRouter = require('./routes/contracttype')(assetBasePath);
 const contractdocumentsRouter = require('./routes/contractdocuments')(assetBasePath);
 const debitorlistRouter = require('./routes/debitorlist')(assetBasePath);
@@ -37,18 +32,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(assetBasePath, express.static(path.join(__dirname, 'web')));
 
-app.use(basePath + '/', rootRouter);
-app.use(basePath + '/contracttype', contracttypeRouter);
-app.use(basePath + '/contractdocuments', contractdocumentsRouter);
-app.use(basePath + '/debitorlist', debitorlistRouter);
+app.use(`${basePath}/`, rootRouter);
+app.use(`${basePath}/contracttype`, contracttypeRouter);
+app.use(`${basePath}/contractdocuments`, contractdocumentsRouter);
+app.use(`${basePath}/debitorlist`, debitorlistRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -58,7 +53,7 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error', {
-        requestId: req.requestId
+        requestId: req.requestId,
     });
 });
 

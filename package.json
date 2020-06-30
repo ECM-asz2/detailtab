@@ -5,8 +5,7 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Error: no start specified\" && exit 1"
+    "deploy": "echo Running ESLint ... && npx eslint **/*.js && echo done && docker-build deploy"
   },
   "author": "Vanessa Teichrib, Alexander Strutz",
   "license": "Apache-2.0",
@@ -21,5 +20,10 @@
     "morgan": "^1.10.0",
     "request": "^2.88.2",
     "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.3.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0"
   }
 }

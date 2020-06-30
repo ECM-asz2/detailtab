@@ -1,102 +1,118 @@
-window.onload = async function () {
-    let config = $('#metaData').data("meta");
+/* eslint-disable no-undef */
+window.onload = async () => {
+    const config = $('#metaData').data('meta');
 
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
 
-    const lists = [].map.call(document.querySelectorAll('.mdc-list'), function (el) {
-        return new mdc.list.MDCList(el);
-    });
-    const ripples = [].map.call(document.querySelectorAll('.mdc-text-field'), function (el) {
-        return new mdc.textField.MDCTextField(el);
-    });
-    const dataTables = [].map.call(document.querySelectorAll('.mdc-data-table'), function (el) {
-        return new mdc.dataTable.MDCDataTable(el);
-    });
+    [].map.call(document.querySelectorAll('.mdc-list'), (el) => new mdc.list.MDCList(el));
+    [].map.call(document.querySelectorAll('.mdc-text-field'), (el) => new mdc.textField.MDCTextField(el));
+    [].map.call(document.querySelectorAll('.mdc-data-table'), (el) => new mdc.dataTable.MDCDataTable(el));
 
-    let debitors = await getData(config);
+    const debitors = await getData(config);
     displayDebitors(debitors);
 };
 
+/**
+ * Searches the debitor table on every key pressed
+ */
+// eslint-disable-next-line no-unused-vars
 function search() {
-    //Adapted from https://www.w3schools.com/howto/howto_js_filter_table.asp
-    let input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("search");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("debitorList");
-    tr = table.getElementsByTagName("tr");
+    // Adapted from https://www.w3schools.com/howto/howto_js_filter_table.asp
+    const input = document.getElementById('search');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('debitorList');
+    const tr = table.getElementsByTagName('tr');
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
+    for (i = 0; i < tr.length; i += 1) {
+        // eslint-disable-next-line prefer-destructuring
+        td = tr[i].getElementsByTagName('td')[1];
         if (td) {
             txtValue = td.textContent || td.innerText;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
+                tr[i].style.display = '';
             } else {
-                tr[i].style.display = "none";
+                tr[i].style.display = 'none';
             }
         }
     }
 }
-
+/**
+ * Searches for all debitors related to one contract
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ * @returns {Object} list of debitors
+ */
 async function getData(config) {
-    let documentId = top.location.href.split('/')[top.location.href.split('/').length - 1].split('#')[0]; //This is risky, but unavoidable
+    // This is risky, but unavoidable
+    const documentId = window.top.location.href.split('/')[window.top.location.href.split('/').length - 1].split('#')[0];
     const options = {
         headers: {
-            'Accept': 'application/hal+json',
+            Accept: 'application/hal+json',
             'Content-Type': 'application/hal+json',
         },
-        url: config.host + '/dms/r/' + config.repoId + '/o2/' + documentId,
-        method: 'get'
-    }
+        url: `${config.host}/dms/r/${config.repoId}/o2/${documentId}`,
+        method: 'get',
+    };
     try {
-        let response = await $.ajax(options);
-        let debitors = [];
-        for (let i in response.multivalueProperties) {
-            if (response.multivalueProperties[i].id === config.partnerIdProperty) {
-                for (let key of Object.keys(response.multivalueProperties[i].values)) {
-                    let debitor = await buildDebitor(response.multivalueProperties[i].values[key], config, options);
-                    if (debitor !== -1)
+        const response = await $.ajax(options);
+        const debitors = [];
+        response.multivalueProperties.forEach(async (property) => {
+            if (property.id === config.partnerIdProperty) {
+                Object.keys(property.values).forEach((key) => {
+                    const debitor = buildDebitor(property.values[key], config, options);
+                    if (debitor !== -1) {
                         debitors.push(debitor);
-                }
+                    }
+                });
             }
-        }
-        return debitors;
+        });
+        return await Promise.all(debitors);
     } catch (err) {
         console.error(err);
         return [];
     }
 }
 
+/**
+ * Searches for a debitor with his ID
+ * @param {String} debitorId ABLE-internal ID of a debitor
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ * @param {Object} options HTTP-config for API call
+ * @returns {Object<String, String, String>} debitor object with name, id and link to the file
+ */
 async function buildDebitor(debitorId, config, options) {
     try {
-        let debitor = {};
+        const debitor = {};
+        const httpOptions = options;
         debitor.debitorId = debitorId;
-        options.url = config.host + '/dms/r/' + config.repoId + '/sr/?objectdefinitionids=["' + config.partnerCategory + '"]&properties={"' + config.debitorIdProperty + '":["' + debitorId + '"]}';
-        let response = await $.ajax(options);
+        httpOptions.url = `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=["${config.partnerCategory}"]&properties={"${config.debitorIdProperty}":["${debitorId}"]}`;
+        const response = await $.ajax(httpOptions);
         if (response.items.length === 0) {
             return -1;
         }
-        let debitorResult = response.items[0];
-        debitor.debitorLink = config.host + '/dms/r/' + config.repoId + '/o2/' + debitorResult.id + '#details';
-        for (let i in debitorResult.displayProperties) {
-            if (debitorResult.displayProperties[i].id === config.partnerNameProperty) {
-                debitor.debitorName = debitorResult.displayProperties[i].value;
+        const debitorResult = response.items[0];
+        debitor.debitorLink = `${config.host}/dms/r/${config.repoId}/o2/${debitorResult.id}#details`;
+        debitorResult.displayProperties.forEach((property) => {
+            if (property.id === config.partnerNameProperty) {
+                debitor.debitorName = property.value;
             }
-        }
+        });
         return debitor;
     } catch {
         return -1;
     }
-
 }
 
+/**
+ * Creates a table for the dynamic rendering of debitors
+ * @param {Object} debitors list of found debitors
+ */
 function displayDebitors(debitors) {
     $('.loading').hide();
     if (debitors.length > 0) {
-        let tableBody = "";
-        for (let i in debitors) {
-            tableBody += getTableRowHtml(debitors[i]);
-        }
+        let tableBody = '';
+        debitors.forEach((debitor) => {
+            tableBody += getTableRowHtml(debitor);
+        });
         $('.mdc-data-table__content').html(tableBody);
         $('.mdc-data-table').show();
     } else {
@@ -104,13 +120,18 @@ function displayDebitors(debitors) {
     }
 }
 
+/**
+ * Creates a new table row for a debitor
+ * @param {Object<String, String, String>} debitor debitor of a contract
+ * @returns {String} Tablerow to be parsed
+ */
 function getTableRowHtml(debitor) {
-    let tableRow = "";
+    let tableRow = '';
     tableRow += '<tr class="mdc-data-table__row"><td class="mdc-data-table__cell mdc-data-table__cell">';
     tableRow += debitor.debitorId;
-    tableRow += '</td><td class="mdc-data-table__cell"><a href="';
+    tableRow += '</td><td class="mdc-data-table__cell"><a target="_blank" href="';
     tableRow += debitor.debitorLink;
-    tableRow += '" class="debitorName">'
+    tableRow += '" class="debitorName">';
     tableRow += debitor.debitorName;
     tableRow += '</a></td></tr>';
     return tableRow;

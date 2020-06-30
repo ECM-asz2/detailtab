@@ -1,144 +1,182 @@
+/* eslint-disable no-undef */
 const contractStatus = {
     terminated: 3,
-    noticed: 2, //In notice period = In Kündigungsfrist
+    // In notice period = In Kündigungsfrist
+    noticed: 2,
     running: 1,
-}
+};
 
-window.onload = async function () {
-    let config = $('#metaData').data("meta");
-
+window.onload = async () => {
+    const config = $('#metaData').data('meta');
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
-
-    const dataTables = [].map.call(document.querySelectorAll('.mdc-data-table'), function (el) {
-        return new mdc.dataTable.MDCDataTable(el);
-    });
-    let documentId = top.location.href.split('/')[top.location.href.split('/').length - 1].split('#')[0]; //This is risky, but unavoidable
-    let contractTypes = await getContractTypes(config, documentId);
-    let contract = await getContractStatus(config, documentId);
+    [].map.call(document.querySelectorAll('.mdc-data-table'), (el) => new mdc.dataTable.MDCDataTable(el));
+    // This is risky, but unavoidable
+    const documentId = window.top.location.href.split('/')[window.top.location.href.split('/').length - 1].split('#')[0];
+    const contractTypes = await getContractTypes(config, documentId);
+    const contract = await getContractStatus(config, documentId);
     displayContractStatus(contract);
     displayContractTypes(contractTypes);
 };
 
+/**
+ * Loads the displayed contract via DMS API
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ * @param {String} documentId d.3 ID of the document (contract) to be loaded
+ * @returns {Object} DMS API object
+ */
 async function getContract(config, documentId) {
     const options = {
         headers: {
-            'Accept': 'application/hal+json',
+            Accept: 'application/hal+json',
             'Content-Type': 'application/hal+json',
         },
-        url: config.host + '/dms/r/' + config.repoId + '/o2/' + documentId,
-        method: 'get'
-    }
-    return await $.ajax(options);
+        url: `${config.host}/dms/r/${config.repoId}/o2/${documentId}`,
+        method: 'get',
+    };
+    return $.ajax(options);
 }
 
+/**
+ * Generates an object with all contracttypes and information on signature
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ * @param {String} documentId d.3 ID of the document (contract) to be loaded
+ * @returns {Object} object with all contracttypes and information on signature
+ */
 async function getContractTypes(config, documentId) {
-    let contractTypes = [];
-    let contract = await getContract(config, documentId);
-    for (let i in contract.objectProperties) {
-        switch (contract.objectProperties[i].id) {
-            case config.aueProperty: contractTypes.push(buildContractTypeObject("Arbeitnehmerüberlassung", contract.objectProperties[i].value)); break;
-            case config.dvProperty: contractTypes.push(buildContractTypeObject("Dienstvertrag", contract.objectProperties[i].value)); break;
-            case config.wvProperty: contractTypes.push(buildContractTypeObject("Werkvertrag", contract.objectProperties[i].value)); break;
-            case config.pvProperty: contractTypes.push(buildContractTypeObject("Personalvermittlung", contract.objectProperties[i].value)); break;
+    const contractTypes = [];
+    const contract = await getContract(config, documentId);
+    contract.objectProperties.forEach((property) => {
+        switch (property.id) {
+        case config.aueProperty: contractTypes.push(buildContractTypeObject('Arbeitnehmerüberlassung', property.value)); break;
+        case config.dvProperty: contractTypes.push(buildContractTypeObject('Dienstvertrag', property.value)); break;
+        case config.wvProperty: contractTypes.push(buildContractTypeObject('Werkvertrag', property.value)); break;
+        case config.pvProperty: contractTypes.push(buildContractTypeObject('Personalvermittlung', property.value)); break;
+        default: break;
         }
-    }
+    });
     return contractTypes;
 }
 
+/**
+ * Converts the contract type information from string to a doubled boolean for a contracttype
+ * @param {String} title name of the contracttype
+ * @param {String} signedField field value which described the contract type and signing
+ * @returns {Object<String, Boolean, Boolean>} Contract type informations which are processable
+ */
 function buildContractTypeObject(title, signedField) {
-    let contractTypeObject = {};
+    const contractTypeObject = {};
     contractTypeObject.title = title;
-    if (signedField === "Ja, unterzeichnet") {
+    if (signedField === 'Ja, unterzeichnet') {
         contractTypeObject.exists = true;
         contractTypeObject.signed = true;
-    } else if (signedField === "Ja, jedoch nicht unterzeichnet") {
+    } else if (signedField === 'Ja, jedoch nicht unterzeichnet') {
         contractTypeObject.exists = true;
         contractTypeObject.signed = false;
-    } else if (signedField === "Nein") {
+    } else if (signedField === 'Nein') {
         contractTypeObject.exists = false;
         contractTypeObject.signed = false;
-    } else {
-        //Shouldn't happen
-        console.error("Unrecognized contract type field ", signedField);
+    } else if (signedField !== '') {
+        // Shouldn't happen
+        console.error('Unrecognized contract type field ', signedField);
         contractTypeObject.exists = false;
         contractTypeObject.signed = false;
     }
     return contractTypeObject;
 }
 
+/**
+ * Builds a contract with name and status
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ * @param {String} documentId d.3 ID of the document (contract) to be loaded
+ * @returns {Object<String, Number>} Contract with name and status
+ */
 async function getContractStatus(config, documentId) {
-    let contractBeginn, contractEnd;
-    let contract = {};
-    let contractResponse = await getContract(config, documentId);
-    for (let i in contractResponse.objectProperties) {
-        if (contractResponse.objectProperties[i].id === config.contractNameProperty) {
-            contract.name = contractResponse.objectProperties[i].value;
-        } else if (contractResponse.objectProperties[i].id === config.contractStartdateProperty) {
-            contractBeginn = contractResponse.objectProperties[i].value;
-        } else if (contractResponse.objectProperties[i].id === config.contractEnddateProperty) {
-            contractEnd = contractResponse.objectProperties[i].value;
+    let contractBeginn;
+    let contractEnd;
+    const contract = {};
+    const contractResponse = await getContract(config, documentId);
+    contractResponse.objectProperties.forEach((property) => {
+        if (property.id === config.contractNameProperty) {
+            contract.name = property.value;
+        } else if (property.id === config.contractStartdateProperty) {
+            contractBeginn = property.value;
+        } else if (property.id === config.contractEnddateProperty) {
+            contractEnd = property.value;
         }
-    }
+    });
     contract.status = determineContractStatus(contractBeginn, contractEnd);
     return contract;
 }
 
+/**
+ * Defines the contract status (red/green) depending on the contract dates
+ * @param {String} contractBegin Configuration based on the tenant providing URLs and data field IDs
+ * @param {String} contractEnd d.3 ID of the document (contract) to be loaded
+ * @returns {Number} Status number
+ */
 function determineContractStatus(contractBegin, contractEnd) {
     if (contractBegin !== '' && typeof contractBegin !== 'undefined') {
-        let beginTimestamp = dateParser(contractBegin);
+        const beginTimestamp = dateParser(contractBegin);
         if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
-            let endTimestamp = dateParser(contractEnd);
+            const endTimestamp = dateParser(contractEnd);
             if (beginTimestamp < Date.now() && endTimestamp > Date.now()) {
                 return contractStatus.running;
-            } else {
-                return contractStatus.terminated;
             }
-        } else {
-            if (beginTimestamp < Date.now()) {
-                return contractStatus.running;
-            } else {
-                return contractStatus.terminated;
-            }
-        }
-    } else {
-        if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
-            let endTimestamp = dateParser(contractEnd);
-            if (endTimestamp > Date.now()) {
-                return contractStatus.running;
-            } else {
-                return contractStatus.terminated;
-            }
-        } else {
             return contractStatus.terminated;
         }
+        if (beginTimestamp < Date.now()) {
+            return contractStatus.running;
+        }
+        return contractStatus.terminated;
     }
+    if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
+        const endTimestamp = dateParser(contractEnd);
+        if (endTimestamp > Date.now()) {
+            return contractStatus.running;
+        }
+        return contractStatus.terminated;
+    }
+    return contractStatus.terminated;
 }
 
+/**
+ * Parses a date string to a Date
+ * @param {String} dateString Date in DD.MM.YYYY
+ * @returns {Date} Parsed date
+ */
 function dateParser(dateString) {
-    let dateArray = dateString.split('.');
+    const dateArray = dateString.split('.');
     return Date.parse(dateArray.reverse().join('-'));
 }
 
+/**
+ * Renders the contract with name and status
+ * @param {Object <String, Number>} contract Contract to be displayes
+ */
 function displayContractStatus(contract) {
     if (contract.name) {
         $('.contractTitle').text(contract.name);
     } else {
-        $('.contractTitle').text("Fehler: Kein Name hinterlegt.");
+        $('.contractTitle').text('Fehler: Kein Name hinterlegt.');
     }
     switch (contract.status) {
-        case contractStatus.running: $('#contractStatus').css('color', '#2ecc71'); break;
-        case contractStatus.noticed: $('#contractStatus').css('color', '#f1c40f'); break;
-        case contractStatus.terminated: $('#contractStatus').css('color', '#e74c3c'); break;
-        default: $('.contractStatus').hide(); console.error("Unknown contract status.")
+    case contractStatus.running: $('#contractStatus').css('color', '#2ecc71'); break;
+    case contractStatus.noticed: $('#contractStatus').css('color', '#f1c40f'); break;
+    case contractStatus.terminated: $('#contractStatus').css('color', '#e74c3c'); break;
+    default: $('.contractStatus').hide(); console.error('Unknown contract status.');
     }
 }
 
+/**
+ * Creates a table for contracttypes
+ * @param {Object} contractTypes List of contract types
+ */
 function displayContractTypes(contractTypes) {
     let tableHtml = '';
     if (contractTypes.length > 0) {
-        for (let i in contractTypes) {
-            tableHtml += createTableRow(contractTypes[i]);
-        }
+        contractTypes.forEach((contractType) => {
+            tableHtml += createTableRow(contractType);
+        });
         $('.mdc-data-table__content').html(tableHtml);
         $('.loading').hide();
         $('.contractTypeWrapper').show();
@@ -148,6 +186,11 @@ function displayContractTypes(contractTypes) {
     }
 }
 
+/**
+ * Creates a table row for a contracttype
+ * @param {Object} contractType Type to be displayes
+ * @returns {String} Valid HTML for a table row
+ */
 function createTableRow(contractType) {
     let rowHtml = '';
     rowHtml += '<tr class="mdc-data-table__row">';
@@ -166,9 +209,15 @@ function createTableRow(contractType) {
     return rowHtml;
 }
 
-function createTableCell(content = "", additionalClass = "") {
+/**
+ * Creates a table cell for content
+ * @param {String} content Table row content
+ * @param {String} additionalClass HTML Class to be appended to the cell
+ * @returns {String} Valid HTML for a table cell
+ */
+function createTableCell(content = '', additionalClass = '') {
     let cellHtml;
-    cellHtml += '<td class="mdc-data-table__cell ' + additionalClass + '">';
+    cellHtml += `<td class="mdc-data-table__cell ${additionalClass}">`;
     cellHtml += content;
     cellHtml += '</td>';
     return cellHtml;
