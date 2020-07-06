@@ -26,6 +26,7 @@ const contracttypeRouter = require('./routes/contracttype')(assetBasePath);
 const contractdocumentsRouter = require('./routes/contractdocuments')(assetBasePath);
 const debitorlistRouter = require('./routes/debitorlist')(assetBasePath);
 
+// eslint-disable-next-line max-len
 app.use(logger('[ctx@49610 rid=":requestId" tn=":tenantId"][http@49610 method=":method" url=":url" millis=":response-time" sbytes=":res[content-length]" status=":status"] '));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

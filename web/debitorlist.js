@@ -83,8 +83,9 @@ async function buildDebitor(debitorId, config, options) {
     try {
         const debitor = {};
         const httpOptions = options;
+        const searchHost = `${config.host}/dms/r/${config.repoId}/sr/?`;
         debitor.debitorId = debitorId;
-        httpOptions.url = `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=["${config.partnerCategory}"]&properties={"${config.debitorIdProperty}":["${debitorId}"]}`;
+        httpOptions.url = `${searchHost}objectdefinitionids=["${config.partnerCategory}"]&properties={"${config.debitorIdProperty}":["${debitorId}"]}`;
         const response = await $.ajax(httpOptions);
         if (response.items.length === 0) {
             return -1;

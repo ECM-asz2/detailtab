@@ -15,11 +15,13 @@ function tenant(defaultSystemBaseUri, base64SignatureSecret) {
 
         if (systemBaseUri || tenantId) {
             if (!base64SignatureSecret) {
+                // eslint-disable-next-line max-len
                 const err = new Error(`error validating signature for headers '${systemBaseUriHeader}' and '${tenantIdHeader}' because secret SIGNATURE_SECRET has not been configured`);
                 err.status = 500;
                 throw err;
             }
             if (!base64Signature) {
+                // eslint-disable-next-line max-len
                 const err = new Error(`error validating signature for headers '${systemBaseUriHeader}' and '${tenantIdHeader}' because signature header '${signatureHeader}' is missing.`);
                 // Forbidden
                 err.status = 403;
