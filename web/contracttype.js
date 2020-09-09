@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
 const contractStatus = {
     terminated: 3,
@@ -10,6 +11,9 @@ window.onload = async () => {
     const config = $('#metaData').data('meta');
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
     [].map.call(document.querySelectorAll('.mdc-data-table'), (el) => new mdc.dataTable.MDCDataTable(el));
+    $('.refresh-icon').on('click', () => {
+        location.reload();
+    });
     // This is risky, but unavoidable
     const documentId = window.top.location.href.split('/')[window.top.location.href.split('/').length - 1].split('#')[0];
     const contractTypes = await getContractTypes(config, documentId);

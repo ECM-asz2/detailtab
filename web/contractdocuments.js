@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
 window.onload = async () => {
     const config = $('#metaData').data('meta');
@@ -8,6 +9,10 @@ window.onload = async () => {
 
     [].map.call(document.querySelectorAll('.mdc-list'), (el) => new mdc.list.MDCList(el));
     [].map.call(document.querySelectorAll('.mdc-data-table'), (el) => new mdc.dataTable.MDCDataTable(el));
+
+    $('.refresh-icon').on('click', () => {
+        location.reload();
+    });
 
     const documentTypes = await getData(config);
     displayDocuments(removeDuplicates(documentTypes));

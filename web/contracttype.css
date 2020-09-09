@@ -38,3 +38,9 @@
 .existsCell {
     padding-left: 0px;
 }
+
+.refresh-icon {
+    position: absolute;
+    bottom: 0px;
+    right: 5px;
+}
