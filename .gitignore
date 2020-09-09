@@ -6,8 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-
-
 /dist/
 /buildcontainer/
 /terraform/.terraform/
@@ -110,3 +108,4 @@ dist
 
 # TernJS port file
 .tern-port
+environment
