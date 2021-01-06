@@ -10,7 +10,7 @@
   "author": "Vanessa Teichrib, Alexander Strutz",
   "license": "Apache-2.0",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "aws-serverless-express": "^3.3.8",
     "cookie-parser": "^1.4.5",
     "debug": "^4.1.1",
