@@ -19,6 +19,7 @@ module.exports = {
         dvProperty: '214',
         wvProperty: '215',
         pvProperty: '216',
+        regEx: 'D[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
     'https://able-group-qas.d-velop.cloud': {
         host: 'https://able-group-qas.d-velop.cloud',
@@ -40,6 +41,7 @@ module.exports = {
         dvProperty: '223',
         wvProperty: '224',
         pvProperty: '225',
+        regEx: 'Q[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
     'https://able-group.d-velop.cloud': {
         host: 'https://able-group.d-velop.cloud',
@@ -61,5 +63,6 @@ module.exports = {
         dvProperty: '216',
         wvProperty: '217',
         pvProperty: '218',
+        regEx: 'P[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
 };

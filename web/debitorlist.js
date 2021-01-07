@@ -47,8 +47,7 @@ function search() {
  * @returns {Object} list of debitors
  */
 async function getData(config) {
-    // This is risky, but unavoidable
-    const documentId = window.top.location.href.split('/')[window.top.location.href.split('/').length - 1].split('#')[0];
+    const documentId = getDocumentId(config);
     const options = {
         headers: {
             Accept: 'application/hal+json',
@@ -141,4 +140,17 @@ function getTableRowHtml(debitor) {
     tableRow += debitor.debitorName;
     tableRow += '</a></td></tr>';
     return tableRow;
+}
+
+function getDocumentId(config) {
+    let documentId = '';
+    const regEx = new RegExp(config.regEx);
+    const iframes = Array.prototype.slice.call(window.top.document.getElementsByTagName('iframe'));
+    iframes.forEach((iframe) => {
+        if (iframe.src.match(regEx)) {
+            // eslint-disable-next-line prefer-destructuring
+            documentId = iframe.src.match(regEx)[0];
+        }
+    });
+    return documentId;
 }

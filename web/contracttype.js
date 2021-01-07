@@ -14,8 +14,7 @@ window.onload = async () => {
     $('.refresh-icon').on('click', () => {
         location.reload();
     });
-    // This is risky, but unavoidable
-    const documentId = window.top.location.href.split('/')[window.top.location.href.split('/').length - 1].split('#')[0];
+    const documentId = getDocumentId(config);
     const contractTypes = await getContractTypes(config, documentId);
     const contract = await getContractStatus(config, documentId);
     displayContractStatus(contract);
@@ -225,4 +224,17 @@ function createTableCell(content = '', additionalClass = '') {
     cellHtml += content;
     cellHtml += '</td>';
     return cellHtml;
+}
+
+function getDocumentId(config) {
+    let documentId = '';
+    const regEx = new RegExp(config.regEx);
+    const iframes = Array.prototype.slice.call(window.top.document.getElementsByTagName('iframe'));
+    iframes.forEach((iframe) => {
+        if (iframe.src.match(regEx)) {
+            // eslint-disable-next-line prefer-destructuring
+            documentId = iframe.src.match(regEx)[0];
+        }
+    });
+    return documentId;
 }
