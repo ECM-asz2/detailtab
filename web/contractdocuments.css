@@ -12,3 +12,8 @@
     bottom: 0px;
     right: 5px;
 }
+
+:root {
+    --mdc-theme-primary: #0069af;
+    --mdc-theme-secondary: #cccc00;
+}

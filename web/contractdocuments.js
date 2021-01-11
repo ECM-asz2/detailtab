@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
+let executed = false;
+
 window.onload = async () => {
-    const config = $('#metaData').data('meta');
+    installDetailTabListener();
 
     // mdc is loaded through material cdn
     // eslint-disable-next-line no-undef
@@ -13,33 +15,57 @@ window.onload = async () => {
     $('.refresh-icon').on('click', () => {
         location.reload();
     });
-
-    const documentTypes = await getData(config);
-    displayDocuments(removeDuplicates(documentTypes));
 };
 
 /**
+ * Registers the detail tab for data exchange with the cm-detailtab lib
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+function installDetailTabListener() {
+    const config = $('#metaData').data('meta');
+
+    require.config({
+        paths: {
+            detailTabJSLib: `${config.assetBasePath}/lib/detailTabJSLib`,
+        },
+    });
+
+    requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
+        const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
+        detailTabConnector.registerForDataChange(async (event) => {
+            if (!executed) {
+                executed = true;
+                const documentTypes = await getData(event.data.masterData.internalNumber, config);
+                displayDocuments(removeDuplicates(documentTypes));
+            }
+        });
+    });
+}
+
+/**
  * Loads all documenttypes available for a contract
+ * @param {String} caseNumber Internal case number given by detailTabLibJS
  * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
  * @returns {Array<String>} List of documenttype names
  */
-async function getData(config) {
-    const documentId = getDocumentId(config);
-    const options = {
-        headers: {
-            Accept: 'application/hal+json',
-            'Content-Type': 'application/hal+json',
-        },
-        url: `${config.host}/dms/r/${config.repoId}/fo/${documentId}/content`,
-        method: 'get',
-    };
+async function getData(caseNumber, config) {
     try {
+        const documentId = await getDocumentId(caseNumber, config);
+        const options = {
+            headers: {
+                Accept: 'application/hal+json',
+                'Content-Type': 'application/hal+json',
+            },
+            url: `${config.host}/dms/r/${config.repoId}/fo/${documentId}/content`,
+            method: 'get',
+        };
+
         const response = await $.ajax(options);
         const documents = [];
         response.items.forEach((item) => {
             if (item.mimeType !== 'application/vnd.dvelop.folder.empty' && item.mimeType !== 'application/vnd.dvelop.folder') {
                 item.displayProperties.forEach((property) => {
-                    if (property.id === '38' && property.value !== '') {
+                    if (property.id === config.contractTypeProperty && property.value !== '') {
                         documents.push(property.value);
                     }
                 });
@@ -71,7 +97,7 @@ function displayDocuments(documents) {
         let tableHtml = '';
         documents.forEach((document) => {
             tableHtml += '<tr class="mdc-data-table__row"><td class="mdc-data-table__cell">';
-            tableHtml += document.split('Kunde ')[1];
+            tableHtml += document.split('Kunde ')[1] || document;
             tableHtml += '</td></tr>';
         });
         $('.mdc-data-table__content').html(tableHtml);
@@ -81,15 +107,23 @@ function displayDocuments(documents) {
     }
 }
 
-function getDocumentId(config) {
+/**
+ * Returns a document ID for a given case number
+ * @param {String} caseNumber Internal case number given by detailTabLibJS
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+async function getDocumentId(caseNumber, config) {
     let documentId = '';
-    const regEx = new RegExp(config.regEx);
-    const iframes = Array.prototype.slice.call(window.top.document.getElementsByTagName('iframe'));
-    iframes.forEach((iframe) => {
-        if (iframe.src.match(regEx)) {
-            // eslint-disable-next-line prefer-destructuring
-            documentId = iframe.src.match(regEx)[0];
-        }
-    });
+    const caseNumberPropertyID = config.internalCaseNumberProperty;
+    const options = {
+        headers: {
+            Accept: 'application/hal+json',
+            'Content-Type': 'application/hal+json',
+        },
+        url: `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XRVER"%5D&properties=%7B"${caseNumberPropertyID}"%3A%5B"${caseNumber}"%5D%7D`,
+        method: 'get',
+    };
+    const response = await $.ajax(options);
+    documentId = response.items[0].id;
     return documentId;
 }

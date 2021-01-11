@@ -13,8 +13,9 @@ module.exports = (assetBasePath) => {
                     title: 'Debitorenliste',
                     stylesheet: `${assetBasePath}/debitorlist.css`,
                     script: `${assetBasePath}/debitorlist.js`,
+                    requirescript: `${assetBasePath}/require.js`,
                     body: '/../views/debitorlist.hbs',
-                    metaData: JSON.stringify(getMetaData(req.systemBaseUri)),
+                    metaData: JSON.stringify(getMetaData(req.systemBaseUri, assetBasePath)),
                 });
             },
             default() {
@@ -25,6 +26,8 @@ module.exports = (assetBasePath) => {
     return router;
 };
 
-function getMetaData(host) {
-    return config[host];
+function getMetaData(host, assetBasePath) {
+    const localConfig = config[host];
+    localConfig.assetBasePath = assetBasePath;
+    return localConfig;
 }

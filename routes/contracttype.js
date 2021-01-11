@@ -13,8 +13,9 @@ module.exports = (assetBasePath) => {
                     title: 'Vertragsarten',
                     stylesheet: `${assetBasePath}/contracttype.css`,
                     script: `${assetBasePath}/contracttype.js`,
+                    requirescript: `${assetBasePath}/require.js`,
                     body: '/../views/contracttype.hbs',
-                    metaData: JSON.stringify(getMetaData(req.systemBaseUri)),
+                    metaData: JSON.stringify(getMetaData(req.systemBaseUri, assetBasePath)),
                 });
             },
 
@@ -26,6 +27,8 @@ module.exports = (assetBasePath) => {
     return router;
 };
 
-function getMetaData(host) {
-    return config[host];
+function getMetaData(host, assetBasePath) {
+    const localConfig = config[host];
+    localConfig.assetBasePath = assetBasePath;
+    return localConfig;
 }

@@ -1,7 +1,15 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
+let executed = false;
+
 window.onload = async () => {
-    const config = $('#metaData').data('meta');
+    try {
+        installDetailTabListener();
+    } catch (err) {
+        console.error(error);
+        $('.loading').hide();
+        $('.contentWrapper').prepend('<h6 class="mdc-typography--headline6">Keine Debitoren gefunden.</h4>');
+    }
 
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
 
@@ -12,10 +20,32 @@ window.onload = async () => {
     $('.refresh-icon').on('click', () => {
         location.reload();
     });
-
-    const debitors = await getData(config);
-    displayDebitors(debitors);
 };
+
+/**
+ * Registers the detail tab for data exchange with the cm-detailtab lib
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+function installDetailTabListener() {
+    const config = $('#metaData').data('meta');
+
+    require.config({
+        paths: {
+            detailTabJSLib: `${config.assetBasePath}/lib/detailTabJSLib`,
+        },
+    });
+
+    requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
+        const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
+        detailTabConnector.registerForDataChange(async (event) => {
+            if (!executed) {
+                executed = true;
+                const debitors = await getData(event.data.masterData.internalNumber, config);
+                displayDebitors(debitors);
+            }
+        });
+    });
+}
 
 /**
  * Searches the debitor table on every key pressed
@@ -46,30 +76,28 @@ function search() {
  * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
  * @returns {Object} list of debitors
  */
-async function getData(config) {
-    const documentId = getDocumentId(config);
-    const options = {
-        headers: {
-            Accept: 'application/hal+json',
-            'Content-Type': 'application/hal+json',
-        },
-        url: `${config.host}/dms/r/${config.repoId}/o2/${documentId}`,
-        method: 'get',
-    };
+async function getData(internalCaseNumber, config) {
     try {
+        const documentId = await getDocumentId(internalCaseNumber, config);
+        const options = {
+            headers: {
+                Accept: 'application/hal+json',
+                'Content-Type': 'application/hal+json',
+            },
+            url: `${config.host}/dms/r/${config.repoId}/o2/${documentId}`,
+            method: 'get',
+        };
         const response = await $.ajax(options);
-        const debitors = [];
-        response.multivalueProperties.forEach(async (property) => {
-            if (property.id === config.partnerIdProperty) {
+        const promises = [];
+        response.multivalueProperties.forEach((property) => {
+            if (property.values && property.id === config.partnerIdProperty) {
                 Object.keys(property.values).forEach((key) => {
-                    const debitor = buildDebitor(property.values[key], config, options);
-                    if (debitor !== -1) {
-                        debitors.push(debitor);
-                    }
+                    promises.push(buildDebitor(property.values[key], config, options));
                 });
             }
         });
-        return await Promise.all(debitors);
+        const debitors = await Promise.all(promises);
+        return debitors;
     } catch (err) {
         console.error(err);
         return [];
@@ -116,7 +144,9 @@ function displayDebitors(debitors) {
     if (debitors.length > 0) {
         let tableBody = '';
         debitors.forEach((debitor) => {
-            tableBody += getTableRowHtml(debitor);
+            if (debitor !== -1) {
+                tableBody += getTableRowHtml(debitor);
+            }
         });
         $('.mdc-data-table__content').html(tableBody);
         $('.mdc-data-table').show();
@@ -142,15 +172,23 @@ function getTableRowHtml(debitor) {
     return tableRow;
 }
 
-function getDocumentId(config) {
+/**
+ * Returns a document ID for a given case number
+ * @param {String} caseNumber Internal case number given by detailTabLibJS
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+async function getDocumentId(caseNumber, config) {
     let documentId = '';
-    const regEx = new RegExp(config.regEx);
-    const iframes = Array.prototype.slice.call(window.top.document.getElementsByTagName('iframe'));
-    iframes.forEach((iframe) => {
-        if (iframe.src.match(regEx)) {
-            // eslint-disable-next-line prefer-destructuring
-            documentId = iframe.src.match(regEx)[0];
-        }
-    });
+    const caseNumberPropertyID = config.internalCaseNumberProperty;
+    const options = {
+        headers: {
+            Accept: 'application/hal+json',
+            'Content-Type': 'application/hal+json',
+        },
+        url: `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XRVER"%5D&properties=%7B"${caseNumberPropertyID}"%3A%5B"${caseNumber}"%5D%7D`,
+        method: 'get',
+    };
+    const response = await $.ajax(options);
+    documentId = response.items[0].id;
     return documentId;
 }

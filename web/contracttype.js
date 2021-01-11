@@ -6,20 +6,52 @@ const contractStatus = {
     noticed: 2,
     running: 1,
 };
+let executed = false;
 
 window.onload = async () => {
-    const config = $('#metaData').data('meta');
+    installDetailTabListener();
+
     mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
     [].map.call(document.querySelectorAll('.mdc-data-table'), (el) => new mdc.dataTable.MDCDataTable(el));
     $('.refresh-icon').on('click', () => {
         location.reload();
     });
-    const documentId = getDocumentId(config);
-    const contractTypes = await getContractTypes(config, documentId);
-    const contract = await getContractStatus(config, documentId);
-    displayContractStatus(contract);
-    displayContractTypes(contractTypes);
 };
+
+/**
+ * Registers the detail tab for data exchange with the cm-detailtab lib
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+function installDetailTabListener() {
+    const config = $('#metaData').data('meta');
+
+    require.config({
+        paths: {
+            detailTabJSLib: `${config.assetBasePath}/lib/detailTabJSLib`,
+        },
+    });
+
+    requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
+        const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
+        detailTabConnector.registerForDataChange(async (event) => {
+            if (!executed) {
+                executed = true;
+                try {
+                    const documentId = await getDocumentId(event.data.masterData.internalNumber, config);
+                    const contractTypes = await getContractTypes(config, documentId);
+                    const contract = await getContractStatus(config, documentId);
+                    displayContractStatus(contract);
+                    displayContractTypes(contractTypes);
+                } catch (err) {
+                    console.error(err);
+                    $('.loading').hide();
+                    $('.contractTypeWrapper').show('');
+                    $('.contractTypeWrapper').html('<h6 class="mdc-typography--headline6">Es wurden keine Vertragsarten gefunden.</h6>');
+                }
+            }
+        });
+    });
+}
 
 /**
  * Loads the displayed contract via DMS API
@@ -47,16 +79,20 @@ async function getContract(config, documentId) {
  */
 async function getContractTypes(config, documentId) {
     const contractTypes = [];
-    const contract = await getContract(config, documentId);
-    contract.objectProperties.forEach((property) => {
-        switch (property.id) {
-        case config.aueProperty: contractTypes.push(buildContractTypeObject('Arbeitnehmerüberlassung', property.value)); break;
-        case config.dvProperty: contractTypes.push(buildContractTypeObject('Dienstvertrag', property.value)); break;
-        case config.wvProperty: contractTypes.push(buildContractTypeObject('Werkvertrag', property.value)); break;
-        case config.pvProperty: contractTypes.push(buildContractTypeObject('Personalvermittlung', property.value)); break;
-        default: break;
-        }
-    });
+    try {
+        const contract = await getContract(config, documentId);
+        contract.objectProperties.forEach((property) => {
+            switch (property.id) {
+            case config.aueProperty: contractTypes.push(buildContractTypeObject('Arbeitnehmerüberlassung', property.value)); break;
+            case config.dvProperty: contractTypes.push(buildContractTypeObject('Dienstvertrag', property.value)); break;
+            case config.wvProperty: contractTypes.push(buildContractTypeObject('Werkvertrag', property.value)); break;
+            case config.pvProperty: contractTypes.push(buildContractTypeObject('Personalvermittlung', property.value)); break;
+            default: break;
+            }
+        });
+    } catch (err) {
+        console.error(err);
+    }
     return contractTypes;
 }
 
@@ -226,15 +262,23 @@ function createTableCell(content = '', additionalClass = '') {
     return cellHtml;
 }
 
-function getDocumentId(config) {
+/**
+ * Returns a document ID for a given case number
+ * @param {String} caseNumber Internal case number given by detailTabLibJS
+ * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
+ */
+async function getDocumentId(caseNumber, config) {
     let documentId = '';
-    const regEx = new RegExp(config.regEx);
-    const iframes = Array.prototype.slice.call(window.top.document.getElementsByTagName('iframe'));
-    iframes.forEach((iframe) => {
-        if (iframe.src.match(regEx)) {
-            // eslint-disable-next-line prefer-destructuring
-            documentId = iframe.src.match(regEx)[0];
-        }
-    });
+    const caseNumberPropertyID = config.internalCaseNumberProperty;
+    const options = {
+        headers: {
+            Accept: 'application/hal+json',
+            'Content-Type': 'application/hal+json',
+        },
+        url: `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XRVER"%5D&properties=%7B"${caseNumberPropertyID}"%3A%5B"${caseNumber}"%5D%7D`,
+        method: 'get',
+    };
+    const response = await $.ajax(options);
+    documentId = response.items[0].id;
     return documentId;
 }
