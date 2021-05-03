@@ -20,7 +20,8 @@ module.exports = {
         dvProperty: '214',
         wvProperty: '215',
         pvProperty: '216',
-        internalCaseNumberProperty: '15',
+        internalCustomerContractNumberProperty: '15',
+        internalCaseNumberProperty: '39',
         regEx: 'D[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
     'https://able-group-qas.d-velop.cloud': {
@@ -44,7 +45,8 @@ module.exports = {
         dvProperty: '223',
         wvProperty: '224',
         pvProperty: '225',
-        internalCaseNumberProperty: '6',
+        internalCustomerContractNumberProperty: '6',
+        internalCaseNumberProperty: '83',
         regEx: 'Q[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
     'https://able-group-version.d-velop.cloud': {
@@ -68,7 +70,8 @@ module.exports = {
         dvProperty: '216',
         wvProperty: '217',
         pvProperty: '218',
-        internalCaseNumberProperty: '6',
+        internalCustomerContractNumberProperty: '6',
+        internalCaseNumberProperty: '84',
         regEx: 'P[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
     'https://able-group.d-velop.cloud': {
@@ -92,7 +95,8 @@ module.exports = {
         dvProperty: '216',
         wvProperty: '217',
         pvProperty: '218',
-        internalCaseNumberProperty: '6',
+        internalCustomerContractNumberProperty: '6',
+        internalCaseNumberProperty: '84',
         regEx: 'P[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]',
     },
 };

@@ -268,14 +268,23 @@ function createTableCell(content = '', additionalClass = '') {
  * @param {Object} config Configuration based on the tenant providing URLs and data field IDs
  */
 async function getDocumentId(caseNumber, config) {
+    let url;
+    let propertyID;
+    if (caseNumber.substring(0, 2) === 'VG') {
+        propertyID = config.internalCaseNumberProperty;
+        url = `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XCASE"%5D&properties=%7B"${propertyID}"%3A%5B"${caseNumber}"%5D%7D`;
+    } else {
+        propertyID = config.internalCustomerContractNumberProperty;
+        url = `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XRVER"%5D&properties=%7B"${propertyID}"%3A%5B"${caseNumber}"%5D%7D`;
+    }
+
     let documentId = '';
-    const caseNumberPropertyID = config.internalCaseNumberProperty;
     const options = {
         headers: {
             Accept: 'application/hal+json',
             'Content-Type': 'application/hal+json',
         },
-        url: `${config.host}/dms/r/${config.repoId}/sr/?objectdefinitionids=%5B"XRVER"%5D&properties=%7B"${caseNumberPropertyID}"%3A%5B"${caseNumber}"%5D%7D`,
+        url,
         method: 'get',
     };
     const response = await $.ajax(options);
