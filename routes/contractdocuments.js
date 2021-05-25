@@ -18,7 +18,6 @@ module.exports = (assetBasePath) => {
                     metaData: JSON.stringify(getMetaData(req.systemBaseUri, assetBasePath)),
                 });
             },
-
             default() {
                 res.status(406).send('Not Acceptable');
             },

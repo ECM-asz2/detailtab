@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
-let executed = false;
+let debitorListExecuted = false;
 
 window.onload = async () => {
     try {
@@ -38,8 +38,8 @@ function installDetailTabListener() {
     requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
         const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
         detailTabConnector.registerForDataChange(async (event) => {
-            if (!executed) {
-                executed = true;
+            if (!debitorListExecuted) {
+                debitorListExecuted = true;
                 const debitors = await getData(event.data.masterData.internalNumber, config);
                 displayDebitors(debitors);
             }

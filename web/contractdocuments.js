@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
-let executed = false;
+let contractDocumentsExecuted = false;
 
 window.onload = async () => {
     installDetailTabListener();
@@ -33,8 +33,8 @@ function installDetailTabListener() {
     requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
         const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
         detailTabConnector.registerForDataChange(async (event) => {
-            if (!executed) {
-                executed = true;
+            if (!contractDocumentsExecuted) {
+                contractDocumentsExecuted = true;
                 const documentTypes = await getData(event.data.masterData.internalNumber, config);
                 displayDocuments(removeDuplicates(documentTypes));
             }

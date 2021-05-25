@@ -6,7 +6,7 @@ const contractStatus = {
     noticed: 2,
     running: 1,
 };
-let executed = false;
+let contractTypeExecuted = false;
 
 window.onload = async () => {
     installDetailTabListener();
@@ -34,8 +34,8 @@ function installDetailTabListener() {
     requirejs(['detailTabJSLib'], (DetailTabJSLib) => {
         const detailTabConnector = new DetailTabJSLib.DetailTabJSLib();
         detailTabConnector.registerForDataChange(async (event) => {
-            if (!executed) {
-                executed = true;
+            if (!contractTypeExecuted) {
+                contractTypeExecuted = true;
                 try {
                     const documentId = await getDocumentId(event.data.masterData.internalNumber, config);
                     const contractTypes = await getContractTypes(config, documentId);
