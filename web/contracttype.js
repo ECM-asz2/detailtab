@@ -155,7 +155,7 @@ async function getContractStatus(config, documentId) {
  */
 function determineContractStatus(contractBegin, contractEnd) {
     if (contractBegin !== '' && typeof contractBegin !== 'undefined') {
-        const beginTimestamp = dateParser(contractBegin);
+        const beginTimestamp = new Date(contractBegin);
         if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
             const endTimestamp = dateParser(contractEnd);
             if (beginTimestamp < Date.now() && endTimestamp > Date.now()) {
@@ -169,7 +169,7 @@ function determineContractStatus(contractBegin, contractEnd) {
         return contractStatus.terminated;
     }
     if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
-        const endTimestamp = dateParser(contractEnd);
+        const endTimestamp = new Date(contractEnd);
         if (endTimestamp > Date.now()) {
             return contractStatus.running;
         }

@@ -12,7 +12,7 @@ const assetBasePath = process.env.ASSET_BASE_PATH || `/${appName}/assets`;
 
 const app = express();
 
-// view engine setupss
+// view engine setups
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
