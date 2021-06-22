@@ -157,7 +157,7 @@ function determineContractStatus(contractBegin, contractEnd) {
     if (contractBegin !== '' && typeof contractBegin !== 'undefined') {
         const beginTimestamp = new Date(contractBegin);
         if (contractEnd !== '' && typeof contractEnd !== 'undefined') {
-            const endTimestamp = dateParser(contractEnd);
+            const endTimestamp = new Date(contractEnd);
             if (beginTimestamp < Date.now() && endTimestamp > Date.now()) {
                 return contractStatus.running;
             }
@@ -176,16 +176,6 @@ function determineContractStatus(contractBegin, contractEnd) {
         return contractStatus.terminated;
     }
     return contractStatus.terminated;
-}
-
-/**
- * Parses a date string to a Date
- * @param {String} dateString Date in DD.MM.YYYY
- * @returns {Date} Parsed date
- */
-function dateParser(dateString) {
-    const dateArray = dateString.split('.');
-    return Date.parse(dateArray.reverse().join('-'));
 }
 
 /**
